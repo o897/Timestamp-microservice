@@ -24,8 +24,6 @@ app.get("/api/hello", function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-const isInvalidDate = (date) => date.toUTCString() === "Invalid Date";
-
 app.get("/api/:date?", (req, res) => {
   let unix, utc;
 
@@ -34,24 +32,8 @@ app.get("/api/:date?", (req, res) => {
 
   let timestamp = parseInt(date);
 
-  // correct
-  if (new Date(timestamp).toUTCString() === "Invalid Date" && date) {
-    res.json({ error: "Invalid Date" });
-    return;
-  }
+  console.log(timestamp);
 
-
-
-  // correct
-  if (timestamp == new Date(timestamp).getTime() && (date).indexOf("-") === -1 && (date).indexOf(" ") === -1) {
-    unix = new Date(timestamp).getTime();
-    console.log("unix within timestamp : " + unix)
-    utc = new Date(timestamp).toUTCString();
-    res.json({ unix, utc });
-    return;
-  }
-
-  // Correct
   if (!date) {
     unix = new Date().getTime();
     utc = new Date().toUTCString();
@@ -59,10 +41,21 @@ app.get("/api/:date?", (req, res) => {
     return;
   }
 
-  // Correct
+  if (new Date(timestamp).toUTCString() === "Invalid Date") {
+    res.json({ error: "Invalid Date" });
+    return;
+  }
+
+  if (timestamp === new Date(parseInt(timestamp)).getTime() && !date.includes('-') && !date.includes(' ')) {
+    unix = new Date(timestamp).getTime();
+    utc = new Date(timestamp).toUTCString();
+    console.log("within timestamp.");
+    res.json({ unix, utc });
+    return;
+  }
+
   unix = date_string.getTime();
   utc = date_string.toUTCString();
-
 
   return res.json({ unix, utc });
 
